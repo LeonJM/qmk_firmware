@@ -21,62 +21,24 @@ enum __layers {
 };
 
 enum custom_keycodes {
-    SPC_ENT = SAFE_RANGE,
-    BSPC_DEL,
+    dummy = SAFE_RANGE,
 };
-
-bool shift_l_held = false;
-bool shift_r_held = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     // All F2 keys in this layout are just for testing only
     [_BASE] = LAYOUT(
-        KC_GRAVE,                KC_1,         KC_2,         KC_3,         KC_4,         KC_5,           KC_6,    KC_7,           KC_8,         KC_9,         KC_0,            KC_MINS,  KC_EQL,   KC_F2,          KC_F2,
-        KC_TAB,                  ESC_Q,        KC_W,         KC_E,         KC_R,         KC_T,           KC_Y,    KC_U,           KC_I,         KC_O,         KC_P,            KC_LBRC,  KC_RBRC,  KC_BSLS,        KC_F2,
-        KC_CAPS,                 L_WIN,        L_ALT,        L_SHIFT,      L_CTRL,       KC_G,           KC_H,    R_CTRL,         R_SHIFT,      R_ALT,        R_WIN,           KC_QUOT,  KC_NO,    KC_ENT,         KC_F2,
-        KC_LSFT,   KC_NO,        KC_Z,         CUT_X,        COPY_C,       PASTE_V,       KC_B,          KC_F2,  KC_N,           KC_M,         KC_COMM,      KC_DOT,          KC_SLSH,            KC_F2,          KC_UP,
-        KC_RCTL,                     KC_F2,       BSPC_DEL,      KC_F2,          SPC_ENT,  KC_F2,   KC_F2,                                                                                                  KC_LEFT, KC_DOWN, KC_RGHT
+        KC_GRAVE,         KC_1,         KC_2,         KC_3,         KC_4,         KC_5,          KC_6,    KC_7,           KC_8,         KC_9,         KC_0,            KC_MINS,  KC_EQL,   KC_F2,          KC_F2,
+        KC_TAB,           ESC_Q,        KC_W,         KC_E,         KC_R,         KC_T,          KC_Y,    KC_U,           KC_I,         KC_O,         KC_P,            KC_LBRC,  KC_RBRC,  KC_BSLS,        KC_F2,
+        KC_CAPS,          L_WIN,        L_ALT,        L_SHIFT,      L_CTRL,       KC_G,          KC_H,    R_CTRL,         R_SHIFT,      R_ALT,        R_WIN,           KC_QUOT,  KC_NO,    KC_ENT,         KC_F2,
+        KC_LSFT,   KC_NO, KC_Z,         CUT_X,        COPY_C,       PASTE_V,      KC_B,          KC_F2,   KC_N,           KC_M,         KC_COMM,      KC_DOT,          KC_SLSH,            KC_F2,          KC_UP,
+        KC_RCTL,          LT(4, KC_DEL), LT(2, KC_BSPC), LT(3, KC_ENT),          LT(1, KC_SPC), KC_F2,  KC_F2,                                                                                    KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case L_SHIFT: {
-            // Intercept hold function to update state
-            if (!record->tap.count && record->event.pressed) {
-                shift_l_held = true;
-            } else {
-                shift_l_held = false;
-            }
-            break;
-        }
-        case R_SHIFT: {
-            // Intercept hold function to update state
-            if (!record->tap.count && record->event.pressed) {
-                shift_r_held = true;
-            } else {
-                shift_r_held = false;
-            }
-            break;
-        }
-        case SPC_ENT: {
-            if (shift_l_held && shift_r_held) {
-                tap_code16(KC_ENT);     // Enter otherwise
-            } else {
-                tap_code16(KC_SPC);     // Space by default
-            }
-            return false;
-        }
-        case BSPC_DEL: {
-            if (shift_l_held && shift_r_held) {
-                tap_code16(KC_DEL);       // Delete otherwise
-            } else {
-                tap_code16(KC_BSPC);    // Backspace by default
-            }
-            return false;
-        }
         case CUT_X: {  
             // Intercept hold function to send Ctrl-X
             if (!record->tap.count && record->event.pressed) {
