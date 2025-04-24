@@ -29,9 +29,11 @@ enum custom_keycodes {
     dummy = SAFE_RANGE,
 };
 
+bool alt_tabbing = false;
+bool alt_held = false;
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
-    // All F2 keys in this layout are just for testing only
     [_BASE] = LAYOUT(
         KC_GRAVE,         KC_1,         KC_2,         KC_3,         KC_4,         KC_5,          KC_6,    KC_7,           KC_8,         KC_9,         KC_0,            KC_MINS,  KC_EQL,   KC_NO,          KC_NO,
         KC_TAB,           ESC_Q,        TAB_W,        KC_E,         KC_R,         KC_T,          KC_Y,    KC_U,           KC_I,         KC_O,         KC_P,            KC_LBRC,  KC_RBRC,  KC_BSLS,        KC_NO,
@@ -41,16 +43,16 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_SYMBOL] = LAYOUT(
-        KC_NO,        KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,             KC_NO,      KC_NO,   KC_NO,   KC_NO,   KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
-        KC_NO,        S(KC_1), S(KC_2), S(KC_3), S(KC_4), S(KC_5),           S(KC_6),    S(KC_7), S(KC_8), S(KC_9), S(KC_0),          KC_NO,  KC_NO,   KC_NO,          KC_NO,
-        KC_NO,        KC_1,    KC_2,    KC_3,    KC_4,    KC_5,              KC_6,       KC_7,    KC_8,    KC_9,    KC_0,             KC_NO,  KC_NO,   KC_NO,          KC_NO,
-        KC_NO, KC_NO, KC_BSLS, S(KC_GRAVE), S(KC_BSLS), KC_LBRC, S(KC_LBRC), KC_NO, S(KC_RBRC), KC_RBRC, KC_QUOT, S(KC_QUOT), KC_GRAVE,  KC_NO,                                     KC_NO,
-        KC_NO,                                    KC_TRNS, KC_TRNS, KC_TRNS,        MO(_FUNC), KC_TRNS, KC_TRNS,                                                      KC_NO, KC_NO, KC_NO
+        KC_NO,        KC_NO,   KC_NO,      KC_NO,     KC_NO,          KC_NO,          KC_NO,   KC_NO,     KC_NO,          KC_NO,     KC_NO,            KC_NO,  KC_NO,  KC_NO,         KC_NO,
+        KC_NO,        KC_NO,   KC_GRAVE,   KC_MINS,   KC_EQL,         KC_NO,          KC_NO,   KC_LBRC,   KC_RBRC,        KC_QUOT,   KC_BSLS,          KC_NO,  KC_NO,  KC_NO,         KC_NO,
+        KC_NO,        KC_1,    KC_2,       LSFT_T(KC_3),      LCTL_T(KC_4),   KC_5,           KC_6,    RCTL_T(KC_7),      RSFT_T(KC_8),   KC_9,      KC_0,             KC_NO,  KC_NO,  KC_NO,         KC_NO,
+        KC_NO, KC_NO, KC_NO,   KC_NO,      KC_NO,     KC_NO,          KC_NO, KC_NO,   KC_NO,   KC_NO,     KC_NO,          KC_NO,     KC_NO,  KC_NO,                                   KC_NO,
+        KC_NO,                                    KC_TRNS, KC_TRNS, KC_TRNS,          MO(_FUNC), KC_TRNS, KC_TRNS,                                                             KC_NO, KC_NO, KC_NO
     ),
 
     [_FUNC] = LAYOUT(
         QK_BOOT,        KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
-        KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,          KC_NO, KC_NO, KC_F11, KC_F12, KC_NO,          KC_NO,  KC_NO,   KC_NO,          KC_NO,
+        KC_NO,          KC_F11, KC_F12, KC_F13, KC_F14, KC_F15,          KC_F16, KC_F17, KC_F18, KC_F19, KC_F20,          KC_NO,  KC_NO,   KC_NO,          KC_NO,
         KC_NO,          KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,          KC_F6, KC_F7, KC_F8, KC_F9, KC_F10,           KC_NO,  KC_NO,   KC_NO,          KC_NO,
         KC_NO, KC_NO,   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,  KC_NO,  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,   KC_NO,                                    KC_NO,
         KC_NO,                  KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS,                                              KC_NO, KC_NO, KC_NO
@@ -67,7 +69,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NAV] = LAYOUT(
         KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
         KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
-        KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,          KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
+        KC_NO,          KC_NO, KC_NO, LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,          KC_LEFT, KC_DOWN, KC_UP, KC_RGHT, KC_NO,            KC_NO,  KC_NO,   KC_NO,          KC_NO,
         KC_NO, KC_NO,   KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,  KC_NO,  KC_NO, KC_NO, KC_NO, KC_NO, KC_NO,  KC_NO,                                     KC_NO,
         KC_NO,                  KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, KC_TRNS, KC_TRNS,                                              KC_NO, KC_NO, KC_NO
     ),
@@ -83,6 +85,30 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case R_ALT:
+        case L_ALT: {
+            if (record->event.pressed) {
+                alt_held = true;
+            } else {
+                alt_held = false;
+                alt_tabbing = false;    // Reset state when Alt is released.
+            }
+            break;
+        }
+        case R_CTRL: {
+            if (record->event.pressed && alt_tabbing) {
+                tap_code(KC_LEFT);  // Left Arrow while alt tabbing
+                return false;
+            }
+            break;
+        }
+        case R_SHIFT: {
+            if (record->event.pressed && alt_tabbing) {
+                tap_code(KC_RIGHT);  // Right Arrow while alt tabbing
+                return false;
+            }
+            break;
+        }
         case CUT_X: {  
             // Intercept hold function to send Ctrl-X
             if (!record->tap.count && record->event.pressed) {
@@ -116,9 +142,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
         case TAB_W: {
-            // Intercept hold function to send Escape
+            // Intercept hold function to send Tab
             if (!record->tap.count && record->event.pressed) {
                 tap_code16(KC_TAB);
+                if (alt_held) alt_tabbing = true;   // Currently alt tabbing.
                 return false;
             }
             break;
