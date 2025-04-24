@@ -19,6 +19,7 @@
 
 enum __layers {
     _BASE,
+    _NORMAL,
     _NUMPAD,
     _SYMBOL,
     _FUNC,
@@ -35,9 +36,17 @@ bool alt_held = false;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT(
-        KC_GRAVE,         KC_1,         KC_2,         KC_3,         KC_4,         KC_5,          KC_6,    KC_7,           KC_8,         KC_9,         KC_0,            KC_MINS,  KC_EQL,   KC_NO,          KC_NO,
-        KC_TAB,           ESC_Q,        TAB_W,        KC_E,         KC_R,         KC_T,          KC_Y,    KC_U,           KC_I,         KC_O,         KC_P,            KC_LBRC,  KC_RBRC,  KC_BSLS,        KC_NO,
-        KC_CAPS,          L_WIN,        L_ALT,        L_SHIFT,      L_CTRL,       KC_G,          KC_H,    R_CTRL,         R_SHIFT,      R_ALT,        R_WIN,           KC_QUOT,  KC_NO,    KC_NO,          KC_NO,
+        KC_NO,           KC_NO,        KC_NO,        KC_NO,        KC_NO,        KC_NO,         KC_NO,    KC_NO,          KC_NO,        KC_NO,        KC_NO,           KC_NO,  KC_NO,  KC_NO,       TG(_NORMAL),
+        KC_NO,           ESC_Q,        TAB_W,        KC_E,         KC_R,         KC_T,          KC_Y,     KC_U,           KC_I,         KC_O,         KC_P,            KC_NO,  KC_NO,  KC_NO,       KC_NO,
+        KC_NO,           L_WIN,        L_ALT,        L_SHIFT,      L_CTRL,       KC_G,          KC_H,     R_CTRL,         R_SHIFT,      R_ALT,        R_WIN,           KC_NO,  KC_NO,  KC_NO,       KC_NO,
+        KC_NO,   KC_NO,  KC_Z,         CUT_X,        COPY_C,       PASTE_V,      KC_B,  KC_NO,  KC_N,     KC_M,           KC_COMM,      KC_DOT,       KC_SLSH, KC_NO,                               KC_NO,
+        KC_NO,               LT(0, KC_DEL), LT(_SYMBOL, KC_BSPC), LT(_NUMPAD, KC_ENT),          LT(_NAV, KC_SPC), KC_NO, KC_NO,                                                              KC_NO, KC_NO, KC_NO
+    ),
+
+    [_NORMAL] = LAYOUT(
+        KC_GRAVE,         KC_1,         KC_2,         KC_3,         KC_4,         KC_5,          KC_6,    KC_7,           KC_8,         KC_9,         KC_0,            KC_MINS,  KC_EQL,   KC_NO,          KC_TRNS,
+        KC_TAB,           ESC_Q,        TAB_W,        KC_E,         KC_R,         KC_T,          KC_Y,    KC_U,           KC_I,         KC_O,         KC_P,            KC_LBRC,  KC_RBRC,  KC_BSLS,        KC_TRNS,
+        KC_CAPS,          L_WIN,        L_ALT,        L_SHIFT,      L_CTRL,       KC_G,          KC_H,    R_CTRL,         R_SHIFT,      R_ALT,        R_WIN,           KC_QUOT,  KC_NO,    KC_NO,          KC_TRNS,
         KC_LSFT,   KC_NO, KC_Z,         CUT_X,        COPY_C,       PASTE_V,      KC_B,  KC_NO,  KC_N,    KC_M,           KC_COMM,      KC_DOT,       KC_SLSH, KC_NO,                                      KC_UP,
         KC_RCTL,    LT(0, KC_DEL), LT(_SYMBOL, KC_BSPC), LT(_NUMPAD, KC_ENT),    LT(_NAV, KC_SPC), KC_NO, KC_NO,                                                                                  KC_LEFT, KC_DOWN, KC_RGHT
     ),
