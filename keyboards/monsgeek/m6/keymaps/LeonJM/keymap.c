@@ -43,7 +43,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO,           ESC_Q,     TAB_W,     KC_E,      KC_R,      KC_T,            KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,               KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           L_WIN,     L_ALT,     L_SHIFT,   L_CTRL,    KC_G,            KC_H,      R_CTRL,    R_SHIFT,   R_ALT,     R_WIN,              KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_Z,      CUT_X,     COPY_C,    PASTE_V,   KC_B,   KC_NO,   KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,            KC_NO,                   KC_NO,
-        KC_NO,   LT(0, KC_DEL), LT(_SYMBOL, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_NAV, KC_SPC), KC_NO, KC_NO,                                                   KC_NO, KC_NO, KC_NO
+        KC_NO,      LT(0, KC_DEL), LT(_NAV, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_SYMBOL, KC_SPC), KC_NO, KC_NO,                                                   KC_NO, KC_NO, KC_NO
     ),
 
     [_NORMAL] = LAYOUT(
@@ -51,7 +51,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,          ESC_Q,     TAB_W,     KC_E,      KC_R,      KC_T,            KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,               KC_LBRC,  KC_RBRC, KC_BSLS,   KC_TRNS,
         KC_CAPS,         L_WIN,     L_ALT,     L_SHIFT,   L_CTRL,    KC_G,            KC_H,      R_CTRL,    R_SHIFT,   R_ALT,     R_WIN,              KC_QUOT,  DEAD,    KC_NO,     KC_TRNS,
         KC_LSFT,  DEAD,  KC_Z,      CUT_X,     COPY_C,    PASTE_V,   KC_B,   KC_NO,   KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,            KC_NO,                        KC_UP,
-        KC_RCTL, LT(0, KC_DEL), LT(_SYMBOL, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_NAV, KC_SPC), KC_NO, KC_NO,                                                      KC_LEFT, KC_DOWN, KC_RGHT
+        KC_RCTL,    LT(0, KC_DEL), LT(_NAV, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_SYMBOL, KC_SPC), KC_NO, KC_NO,                                                      KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
     [_SYMBOL] = LAYOUT(
@@ -59,7 +59,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO,           KC_NO,     KC_GRAVE,  KC_MINS,      KC_EQL,       KC_NO,            KC_NO,     KC_LBRC,      KC_RBRC,      KC_QUOT,   KC_BSLS,        KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           KC_1,      KC_2,      LSFT_T(KC_3), LCTL_T(KC_4), KC_5,             KC_6,      RCTL_T(KC_7), RSFT_T(KC_8), KC_9,      KC_0,           KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_NO,     KC_NO,     KC_NO,        KC_NO,        KC_NO,   KC_NO,   KC_NO,     KC_NO,        KC_NO,        KC_NO,     KC_NO,          KC_NO,                   KC_NO,
-        KC_NO,                                         KC_TRNS, KC_TRNS, KC_TRNS,            MO(_FUNC), KC_TRNS, KC_TRNS,                                                        KC_NO, KC_NO, KC_NO
+        KC_NO,                              KC_TRNS, LT(_FUNC, KC_BSPC), KC_TRNS,            KC_TRNS, KC_TRNS, KC_TRNS,                                                        KC_NO, KC_NO, KC_NO
     ),
 
     [_FUNC] = LAYOUT(
