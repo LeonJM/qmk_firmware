@@ -35,6 +35,8 @@ enum custom_keycodes {
 
 bool alt_tabbing = false;
 bool alt_held = false;
+bool win_tabbing = false;
+bool win_held = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -97,6 +99,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
+        case L_WIN:
+        case R_WIN: {
+            win_held = record->event.pressed;
+            break;
+        }
         case R_ALT:
         case L_ALT: {
             if (record->event.pressed) {
@@ -108,15 +115,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
         case R_CTRL: {
-            if (record->event.pressed && alt_tabbing) {
-                tap_code(KC_LEFT);  // Left Arrow while alt tabbing
+            if (record->event.pressed && (alt_tabbing  || win_tabbing)) {
+                tap_code(KC_LEFT);  // Left Arrow while alt/win tabbing
                 return false;
             }
             break;
         }
         case R_SHIFT: {
-            if (record->event.pressed && alt_tabbing) {
-                tap_code(KC_RIGHT);  // Right Arrow while alt tabbing
+            if (record->event.pressed && (alt_tabbing || win_tabbing)) {
+                tap_code(KC_RIGHT);  // Right Arrow while alt/win tabbing
                 return false;
             }
             break;
@@ -158,11 +165,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->tap.count && record->event.pressed) {
                 tap_code16(KC_TAB);
                 if (alt_held) alt_tabbing = true;   // Currently alt tabbing.
+                if (win_held) win_tabbing = true;   // Currently window tabbing.
                 return false;
             }
             break;
         }
     }
+    
+    win_tabbing = false;    // Reset window tabbing state here.
     return true;        // Process the keycode as ususal
 }
 
