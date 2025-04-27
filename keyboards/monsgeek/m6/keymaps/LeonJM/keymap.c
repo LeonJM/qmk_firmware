@@ -30,7 +30,7 @@ enum __layers {
 };
 
 enum custom_keycodes {
-    dummy = SAFE_RANGE,
+    VIM_H = SAFE_RANGE,
 };
 
 bool alt_tabbing = false;
@@ -83,7 +83,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_NAV] = LAYOUT(
         KC_NO,           KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,            KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,            KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
-        KC_NO,           KC_NO,     LALT_T(KC_NO), LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            KC_LEFT,   KC_DOWN,   KC_UP,     KC_RGHT,   KC_NO,          KC_NO, DEAD,  KC_NO,     KC_NO,
+        KC_NO,           KC_NO,     LALT_T(KC_NO), LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            VIM_H,     KC_DOWN,   KC_UP,     KC_RGHT,   KC_NO,          KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,   KC_NO,   KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO,                   KC_NO,
         KC_NO,                                               KC_TRNS, KC_TRNS, KC_TRNS,            KC_TRNS, KC_TRNS, KC_TRNS,                                                    KC_NO, KC_NO, KC_NO
     ),
@@ -98,6 +98,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+
+    mod_state = get_mods();
+
     switch (keycode) {
         case L_WIN:
         case R_WIN: {
@@ -170,8 +173,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
+        case VIM_H: {
+            if (mod_state & MOD_MASK_SHIFT) { // H
+                const uint16_t mods[] = { KC_LCTL, KC_NO };
+                const uint16_t keys[] = { KC_HOME, KC_NO };
+                send_mod_key(mods, keys);
+            } else { // h
+                tap_code16(KC_LEFT);
+            }
+            return false;
+        }
     }
-    
+
     win_tabbing = false;    // Reset window tabbing state here.
     return true;        // Process the keycode as ususal
 }
@@ -188,4 +201,35 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         default:
             return TAPPING_TERM;
     }
+}
+
+/// @brief Send key(s) with one or more modifiers, using sentinel KC_NO to mark end of arrays.
+/// @param mod_keys Null-terminated array of modifier keys (ends with KC_NO)
+/// @param target_keys Null-terminated array of target keys (ends with KC_NO)
+void send_mod_keys(const uint16_t *mod_keys, const uint16_t *target_keys) {
+    uint8_t saved_mods = get_mods();  // Save existing mods
+
+    clear_mods();                     // Prevent mod interference
+
+    // Press all mod keys
+    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
+        register_code(*k);
+    }
+
+    // Press all target keys
+    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
+        register_code(*k);
+    }
+
+    // Release all target keys
+    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
+        unregister_code(*k);
+    }
+
+    // Release all mod keys
+    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
+        unregister_code(*k);
+    }
+
+    set_mods(saved_mods);  // Restore original mods
 }
