@@ -97,9 +97,40 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // ),
 };
 
+/// @brief Send key(s) with one or more modifiers, using sentinel KC_NO to mark end of arrays.
+/// @param mod_keys Null-terminated array of modifier keys (ends with KC_NO)
+/// @param target_keys Null-terminated array of target keys (ends with KC_NO)
+void send_mod_keys(const uint16_t *mod_keys, const uint16_t *target_keys) {
+    uint8_t saved_mods = get_mods();  // Save existing mods
+
+    clear_mods();                     // Prevent mod interference
+
+    // Press all mod keys
+    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
+        register_code(*k);
+    }
+
+    // Press all target keys
+    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
+        register_code(*k);
+    }
+
+    // Release all target keys
+    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
+        unregister_code(*k);
+    }
+
+    // Release all mod keys
+    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
+        unregister_code(*k);
+    }
+
+    set_mods(saved_mods);  // Restore original mods
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
-    mod_state = get_mods();
+    uint8_t mod_state = get_mods();
 
     switch (keycode) {
         case L_WIN:
@@ -177,7 +208,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (mod_state & MOD_MASK_SHIFT) { // H
                 const uint16_t mods[] = { KC_LCTL, KC_NO };
                 const uint16_t keys[] = { KC_HOME, KC_NO };
-                send_mod_key(mods, keys);
+                send_mod_keys(mods, keys);
             } else { // h
                 tap_code16(KC_LEFT);
             }
@@ -201,35 +232,4 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         default:
             return TAPPING_TERM;
     }
-}
-
-/// @brief Send key(s) with one or more modifiers, using sentinel KC_NO to mark end of arrays.
-/// @param mod_keys Null-terminated array of modifier keys (ends with KC_NO)
-/// @param target_keys Null-terminated array of target keys (ends with KC_NO)
-void send_mod_keys(const uint16_t *mod_keys, const uint16_t *target_keys) {
-    uint8_t saved_mods = get_mods();  // Save existing mods
-
-    clear_mods();                     // Prevent mod interference
-
-    // Press all mod keys
-    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
-        register_code(*k);
-    }
-
-    // Press all target keys
-    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
-        register_code(*k);
-    }
-
-    // Release all target keys
-    for (const uint16_t *k = target_keys; *k != KC_NO; ++k) {
-        unregister_code(*k);
-    }
-
-    // Release all mod keys
-    for (const uint16_t *k = mod_keys; *k != KC_NO; ++k) {
-        unregister_code(*k);
-    }
-
-    set_mods(saved_mods);  // Restore original mods
 }
