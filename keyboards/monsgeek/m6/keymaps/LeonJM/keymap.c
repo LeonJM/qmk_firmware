@@ -128,7 +128,7 @@ void send_mod_keys(const uint16_t *mod_keys, const uint16_t *target_keys) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
-    uint8_t mod_state = get_mods();
+    // uint8_t mod_state = get_mods();
 
     switch (keycode) {
         case R_ALT:
@@ -197,13 +197,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         }
         case VIM_H: {
-            if (mod_state & MOD_MASK_SHIFT) { // H
-                const uint16_t mods[] = { KC_LCTL, KC_NO };
-                const uint16_t keys[] = { KC_HOME, KC_NO };
-                send_mod_keys(mods, keys);
-            } else { // h
-                tap_code16(KC_LEFT);
-            }
+            // if (mod_state & MOD_MASK_SHIFT) { // H
+            //     const uint16_t mods[] = { KC_LCTL, KC_NO };
+            //     const uint16_t keys[] = { KC_HOME, KC_NO };
+            //     send_mod_keys(mods, keys);
+            // } else { // h
+            //     tap_code16(KC_LEFT);
+            // }
+            tap_code16(KC_LEFT);
             return false;
         }
     }
