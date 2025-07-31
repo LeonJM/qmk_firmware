@@ -40,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT(
         KC_NO,           KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,           KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,              KC_NO, KC_NO, KC_NO,     TG(_NORMAL),
-        KC_NO,           ESC_Q,     TAB_W,     KC_E,      KC_R,      KC_T,            KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,               KC_NO, KC_NO, KC_NO,     KC_NO,
+        KC_NO,           KC_Q,      KC_W,      KC_E,      KC_R,      KC_T,            KC_Y,      KC_U,      KC_I,      KC_O,      KC_P,               KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           L_WIN,     L_ALT,     L_SHIFT,   L_CTRL,    KC_G,            KC_H,      R_CTRL,    R_SHIFT,   R_ALT,     R_WIN,              KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_Z,      CUT_X,     COPY_C,    PASTE_V,   KC_B,   KC_NO,   KC_N,      KC_M,      KC_COMM,   KC_DOT,    KC_SLSH,            KC_NO,                   KC_NO,
         KC_NO,      LT(0, KC_DEL), LT(_NAV, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_SYMBOL, KC_SPC), KC_NO, KC_NO,                                                   KC_NO, KC_NO, KC_NO
@@ -79,11 +79,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
     [_NAV] = LAYOUT(
-        KC_NO,           KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,            KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
-        KC_NO,           KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,            KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
-        KC_NO,           KC_NO,     LALT_T(KC_NO), LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            VIM_H,     KC_DOWN,   KC_UP,     KC_RGHT,   KC_NO,          KC_NO, DEAD,  KC_NO,     KC_NO,
-        KC_NO,   DEAD,   KC_NO,     KC_NO,         KC_NO,         KC_NO,         KC_NO,   KC_NO,   KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,          KC_NO,                   KC_NO,
-        KC_NO,                                               KC_TRNS, KC_TRNS, KC_TRNS,            KC_TRNS, KC_TRNS, KC_TRNS,                                                    KC_NO, KC_NO, KC_NO
+        KC_NO,           KC_NO,     KC_NO,          KC_NO,         KC_NO,         KC_NO,            KC_NO,        KC_NO,            KC_NO,          KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
+        KC_NO,           KC_NO,     KC_NO,          KC_NO,         KC_NO,         KC_NO,            KC_NO,        KC_NO,            KC_NO,          KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
+        KC_NO,           KC_ESC,    LALT_T(KC_TAB), LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            KC_LEFT,      KC_DOWN,          KC_UP,          KC_RGHT,   KC_NO,          KC_NO, DEAD,  KC_NO,     KC_NO,
+        KC_NO,   DEAD,   KC_NO,     KC_NO,          KC_INSERT,     KC_NO,         KC_NO,   KC_NO,   KC_HOME,      KC_PAGE_DOWN,     KC_PAGE_UP,     KC_END,    KC_NO,          KC_NO,                   KC_NO,
+        KC_NO,                                               KC_TRNS, KC_TRNS, KC_TRNS,            KC_TRNS, KC_TRNS, KC_TRNS,                                                                   KC_NO, KC_NO, KC_NO
     ),
 
     // [_TRNS] = LAYOUT(
@@ -179,34 +179,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
-        case ESC_Q: {
-            // Intercept hold function to send Escape
-            if (!record->tap.count && record->event.pressed) {
-                tap_code16(KC_ESC);
-                return false;
-            }
-            break;
-        }
-        case TAB_W: {
-            // Intercept hold function to send Tab
-            if (!record->tap.count && record->event.pressed) {
-                tap_code16(KC_TAB);
-                if (alt_held) alt_tabbing = true;   // Currently alt tabbing.
-                return false;
-            }
-            break;
-        }
-        case VIM_H: {
-            // if (mod_state & MOD_MASK_SHIFT) { // H
-            //     const uint16_t mods[] = { KC_LCTL, KC_NO };
-            //     const uint16_t keys[] = { KC_HOME, KC_NO };
-            //     send_mod_keys(mods, keys);
-            // } else { // h
-            //     tap_code16(KC_LEFT);
-            // }
-            tap_code16(KC_LEFT);
-            return false;
-        }
     }
 
     return true;        // Process the keycode as ususal
@@ -219,7 +191,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case L_ALT:
         case R_ALT:
         case R_WIN:
-        case ESC_Q:
             return TAPPING_TERM + 100;
         default:
             return TAPPING_TERM;
