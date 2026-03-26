@@ -205,3 +205,51 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM;
     }
 }
+
+bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
+    switch (get_highest_layer(layer_state)) {
+        case _BASE:
+            // White
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 255, 255, 255);
+            }
+            break;
+        case _DVORAK:
+            // Cyan
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 0, 255, 255);
+            }
+            break;
+        case _NORMAL:
+            // Green
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 0, 255, 0);
+            }
+            break;
+        case _NUMPAD:
+            // Blue
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 0, 0, 255);
+            }
+            break;
+        case _SYMBOL:
+            // Purple
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 128, 0, 255);
+            }
+            break;
+        case _FUNC:
+            // Red
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 255, 0, 0);
+            }
+            break;
+        case _NAV:
+            // Yellow
+            for (uint8_t i = led_min; i < led_max; i++) {
+                rgb_matrix_set_color(i, 255, 255, 0);
+            }
+            break;
+    }
+    return false;
+}
