@@ -24,7 +24,6 @@
 #define R_WIN RGUI_T(KC_SCLN)
 
 // Home Row Mods (Dvorak) - mod tap keycodes
-#define L_WIN2 LGUI_T(KC_A)
 #define L_ALT2 LALT_T(KC_O)
 #define L_SHIFT2 LSFT_T(KC_E)
 #define L_CTRL2 LCTL_T(KC_U)
@@ -48,11 +47,9 @@ enum __layers {
 };
 
 enum custom_keycodes {
-    VIM_H = SAFE_RANGE,
+    VIM_H = SAFE_RANGE, // Currently unused.
 };
 
-bool alt_tabbing = false;
-bool alt_held = false;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -67,7 +64,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DVORAK] = LAYOUT(
         KC_NO,           KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,           KC_NO,     KC_NO,     KC_NO,     KC_NO,     KC_NO,              KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           KC_QUOT,   KC_COMM,   KC_DOT,    KC_P,      KC_Y,            KC_F,      KC_G,      KC_C,      KC_R,      KC_L,               KC_NO, KC_NO, KC_NO,     KC_NO,
-        KC_NO,           L_WIN2,    L_ALT2,    L_SHIFT2,  L_CTRL2,   KC_I,            KC_D,      R_CTRL2,   R_SHIFT2,  R_ALT2,    R_WIN2,             KC_NO, DEAD,  KC_NO,     KC_NO,
+        KC_NO,           L_WIN,    L_ALT2,    L_SHIFT2,  L_CTRL2,   KC_I,            KC_D,      R_CTRL2,   R_SHIFT2,  R_ALT2,    R_WIN2,             KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_SCLN,   CUT_X2,    COPY_C2,   PASTE_V2,  KC_X,   KC_NO,   KC_B,      KC_M,      KC_W,      KC_V,      KC_Z,            KC_NO,                   KC_NO,
         KC_NO,      LT(0, KC_DEL), LT(_NAV, KC_BSPC), LT(_NUMPAD, KC_ENT),            LT(_SYMBOL, KC_SPC), KC_NO, KC_NO,                                                   KC_NO, KC_NO, KC_NO
     ),
@@ -106,7 +103,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_NAV] = LAYOUT(
         KC_NO,           KC_NO,           KC_NO,          KC_NO,         KC_NO,         KC_NO,            KC_NO,        KC_NO,            KC_NO,          KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
-        KC_NO,           KC_NO,           KC_NO,          KC_NO,         KC_NO,         KC_NO,            KC_NO,        KC_NO,            KC_NO,          KC_NO,     KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
+        KC_NO,           KC_NO,           KC_NO,          KC_NO,         KC_NO,         KC_NO,            MS_WHLL,      MS_WHLD,          MS_WHLU,        MS_WHLR,   KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           LGUI_T(KC_ESC),  LALT_T(KC_NO),  LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            KC_LEFT,      KC_DOWN,          KC_UP,          KC_RGHT,   KC_NO,          KC_NO, DEAD,  KC_NO,     KC_NO,
         KC_NO,   DEAD,   KC_NO,           KC_NO,          KC_INSERT,     KC_NO,         KC_NO,   KC_NO,   KC_HOME,      KC_PAGE_DOWN,     KC_PAGE_UP,     KC_END,    KC_NO,          KC_NO,                   KC_NO,
         KC_NO,                                                      KC_TRNS, KC_TRNS, KC_TRNS,            KC_TAB, KC_TRNS, KC_TRNS,                                                                    KC_NO, KC_NO, KC_NO
@@ -159,34 +156,9 @@ combo_t key_combos[] = {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
-    // uint8_t mod_state = get_mods();
-
     switch (keycode) {
-        case R_ALT:
-        case L_ALT: {
-            if (record->event.pressed) {
-                alt_held = true;
-            } else {
-                alt_held = false;
-                alt_tabbing = false;    // Reset state when Alt is released.
-            }
-            break;
-        }
-        case R_CTRL: {
-            if (record->event.pressed && (alt_tabbing)) {
-                tap_code(KC_LEFT);  // Left Arrow while alt tabbing
-                return false;
-            }
-            break;
-        }
-        case R_SHIFT: {
-            if (record->event.pressed && (alt_tabbing)) {
-                tap_code(KC_RIGHT);  // Right Arrow while alt tabbing
-                return false;
-            }
-            break;
-        }
-        case CUT_X: {  
+        case CUT_X:
+        case CUT_X2: {  
             // Intercept hold function to send Ctrl-X
             if (!record->tap.count && record->event.pressed) {
                 tap_code16(C(KC_X)); 
@@ -194,7 +166,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
-        case COPY_C: {  
+        case COPY_C:
+        case COPY_C2: {  
             // Intercept hold function to send Ctrl-C
             if (!record->tap.count && record->event.pressed) {
                 tap_code16(C(KC_C));
@@ -202,7 +175,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
-        case PASTE_V: {  
+        case PASTE_V:
+        case PASTE_V2: {  
             // Intercept hold function to send Ctrl-V
             if (!record->tap.count && record->event.pressed) {
                 tap_code16(C(KC_V));
@@ -210,6 +184,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         }
+        
     }
 
     return true;        // Process the keycode as ususal
@@ -220,8 +195,11 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case L_WIN:
         case L_ALT:
+        case L_ALT2:
         case R_ALT:
+        case R_ALT2:
         case R_WIN:
+        case R_WIN2:
             return TAPPING_TERM + 100;
         default:
             return TAPPING_TERM;
