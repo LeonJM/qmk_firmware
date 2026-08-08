@@ -44,21 +44,35 @@
 const uint16_t PROGMEM dvorak_layer_combo[] = {L_CTRL, R_CTRL, COMBO_END};
 const uint16_t PROGMEM qwerty_layer_combo[] = {L_CTRL2, R_CTRL2, COMBO_END};
 
+// Layer numbering is not free here, for two reasons.
+//
+// 1. split65.c hardcodes its own enum (_BL=0, _FL=1, _MBL=2, _MFL=3) and tests
+//    keymap_is_mac_system() as "default_layer_state is 2 or 3". That macro gates
+//    ~30 branches of Mac/Windows key remapping in process_record_kb. _NORMAL is a
+//    *persistent default layer*, so it must avoid 2 and 3 or the board silently
+//    enters Mac mode. Hence the gap.
+// 2. QMK resolves keys from the highest active layer down, and default_layer_state
+//    counts. So every momentary layer must sit ABOVE _NORMAL, or it would be
+//    invisible whenever _NORMAL is the default.
 enum __layers {
-    _BASE,
-    _DVORAK,
-    _NORMAL,
-    _SYMBOL,
-    _FUNC,
-    _NAV,
-    _STOCKFN
+    _BASE    = 0,
+    _DVORAK  = 1,
+    _NORMAL  = 4,
+    _SYMBOL  = 5,
+    _FUNC    = 6,
+    _NAV     = 7,
+    _STOCKFN = 8
+};
+
+enum custom_keycodes {
+    TG_NORM = SAFE_RANGE,   // toggle _BASE <-> _NORMAL, remembered across power cycles
 };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [_BASE] = LAYOUT(
-        KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,   KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   TG(_NORMAL),
+        KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,   KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   TG_NORM,
         KC_NO,   KC_Q,    KC_W,    KC_E,     KC_R,     KC_T,                 KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_NO,   KC_NO,   KC_NO,   KC_DEL,
         KC_NO,   L_WIN,   L_ALT,   L_SHIFT,  L_CTRL,   KC_G,                 KC_H,    R_CTRL,  R_SHIFT, R_ALT,   R_WIN,   KC_NO,   KC_ENT,           KC_NO,
         KC_NO,   KC_Z,    CUT_X,   COPY_C,   PASTE_V,  KC_B,                 KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_NO,   KC_NO,   KC_NO,
@@ -77,7 +91,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // Only deviation: the knob press is KC_TRNS so it falls through to _BASE's
     // TG(_NORMAL) and toggles back out.
     [_NORMAL] = LAYOUT(
-        KC_ESC,  KC_1,    KC_2,    KC_3,     KC_4,     KC_5,    KC_6,        KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, KC_TRNS,
+        KC_ESC,  KC_1,    KC_2,    KC_3,     KC_4,     KC_5,    KC_6,        KC_7,    KC_8,    KC_9,    KC_0,    KC_MINS, KC_EQL,  KC_BSPC, TG_NORM,
         KC_TAB,  KC_Q,    KC_W,    KC_E,     KC_R,     KC_T,                 KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS, KC_DEL,
         KC_CAPS, KC_A,    KC_S,    KC_D,     KC_F,     KC_G,                 KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT, KC_ENT,           KC_PGUP,
         KC_LSFT, KC_Z,    KC_X,    KC_C,     KC_V,     KC_B,                 KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT, KC_UP,   KC_PGDN,
@@ -142,6 +156,16 @@ combo_t key_combos[] = {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
+        case TG_NORM: {
+            // Swap the default layer rather than toggling one on top, so QMK
+            // persists the choice to EEPROM and the board comes back where you
+            // left it. _NORMAL is the stock layout; _BASE is the custom one.
+            if (record->event.pressed) {
+                set_single_persistent_default_layer(
+                    get_highest_layer(default_layer_state) == _NORMAL ? _BASE : _NORMAL);
+            }
+            return false;
+        }
         case CUT_X:
         case CUT_X2: {
             // Intercept hold function to send Ctrl-X
@@ -202,6 +226,34 @@ static void wash(uint8_t led_min, uint8_t led_max, uint8_t r, uint8_t g, uint8_t
     }
 }
 
+// _NORMAL gets a horizontal gradient instead of a flat wash: light blue at the
+// G/H seam fading to light purple at the outer edges. G's LED sits at x=79 and
+// H's at x=93, so the seam is 86.
+//
+// Each side is normalised to its own width rather than to absolute distance.
+// The right half is physically wider (brackets, backslash, arrows, pinky column)
+// so it reaches x=210 while the left only reaches x=0 -- scaling by raw distance
+// would leave the left edge visibly less purple than the right.
+#define GRAD_SEAM  86
+#define GRAD_LEFT  86    // seam -> x=0
+#define GRAD_RIGHT 124   // seam -> x=210
+
+static void gradient(uint8_t led_min, uint8_t led_max) {
+    for (uint8_t i = led_min; i < led_max; i++) {
+        int16_t  dx   = (int16_t)g_led_config.point[i].x - GRAD_SEAM;
+        uint16_t span = (dx < 0) ? GRAD_LEFT : GRAD_RIGHT;
+        if (dx < 0) dx = -dx;
+
+        uint16_t t = ((uint16_t)dx * 255) / span;   // 0 at the seam, 255 at either edge
+        if (t > 255) t = 255;
+
+        rgb_matrix_set_color(i,
+                             110 + (uint8_t)((90 * t) / 255),    // 110 -> 200
+                             200 - (uint8_t)((50 * t) / 255),    // 200 -> 150
+                             255);                               // blue stays pinned
+    }
+}
+
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch (get_highest_layer(layer_state)) {
         case _BASE:
@@ -211,7 +263,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             wash(led_min, led_max, 0, 255, 255);    // Cyan
             break;
         case _NORMAL:
-            wash(led_min, led_max, 0, 255, 0);      // Green
+            gradient(led_min, led_max);             // Light blue centre -> light purple edges
             break;
         case _SYMBOL:
             wash(led_min, led_max, 128, 0, 255);    // Purple
