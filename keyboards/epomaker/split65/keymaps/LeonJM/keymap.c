@@ -104,7 +104,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,   KC_NO,       KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_NO,
         KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_NO,    KC_NO,                MS_WHLL, MS_WHLD, MS_WHLU, MS_WHLR, KC_NO,   KC_NO,   KC_NO,   KC_NO,   KC_TRNS,
         KC_NO,   LGUI_T(KC_ESC), LALT_T(KC_NO), LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,  KC_LEFT, RCTL_T(KC_DOWN), RSFT_T(KC_UP), RALT_T(KC_RGHT), RGUI_T(KC_NO), KC_NO, KC_TRNS, KC_NO,
-        KC_NO,   KC_NO,   KC_NO,   KC_INSERT,KC_NO,    KC_NO,                KC_HOME, KC_PGDN, KC_PGUP, KC_END,  KC_NO,            KC_NO,   KC_NO,   KC_NO,
+        KC_NO,   KC_NO,   KC_NO,   KC_NO,    KC_INSERT,KC_NO,                KC_HOME, KC_PGDN, KC_PGUP, KC_END,  KC_NO,            KC_NO,   KC_NO,   KC_NO,
         KC_NO,   KC_TRNS, KC_TRNS, KC_TRNS,                                  KC_TAB,  KC_TRNS, KC_TRNS, KC_TRNS,                   KC_NO,   KC_NO,   KC_NO
     ),
 
@@ -191,30 +191,13 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
-// LEDs the vendor firmware drives itself (battery gauge, BT/2.4G pairing blink,
-// caps lock, win lock). Painting over these would hide pairing and battery
-// feedback, so the per-layer wash below skips them. Indices come from
-// keyboards/epomaker/split65/config.h.
-static bool is_reserved_indicator(uint8_t i) {
-    static const uint8_t battery[] = RGB_MATRIX_BAT_INDEX_MAP;
-    static const uint8_t status[]  = {
-        HS_RGB_INDEX_WIN_LOCK, HS_RGB_INDEX_CAPS,
-        HS_RGB_BLINK_INDEX_BT1, HS_RGB_BLINK_INDEX_BT2,
-        HS_RGB_BLINK_INDEX_BT3, HS_RGB_BLINK_INDEX_2G4,
-        HS_MATRIX_BLINK_INDEX_BAT,
-    };
-    for (uint8_t n = 0; n < sizeof(battery); n++) {
-        if (battery[n] == i) return true;
-    }
-    for (uint8_t n = 0; n < sizeof(status); n++) {
-        if (status[n] == i) return true;
-    }
-    return false;
-}
-
+// Paint every LED. No need to spare the indicator positions: the vendor's
+// rgb_matrix_indicators_advanced_kb() calls this hook *first* and only then
+// paints caps lock, win lock, the BT/2.4G pairing blink and the battery gauge,
+// so those overlay us and still win. They are event-driven anyway -- they only
+// paint while charging, on low battery, or during a pairing blink.
 static void wash(uint8_t led_min, uint8_t led_max, uint8_t r, uint8_t g, uint8_t b) {
     for (uint8_t i = led_min; i < led_max; i++) {
-        if (is_reserved_indicator(i)) continue;
         rgb_matrix_set_color(i, r, g, b);
     }
 }
