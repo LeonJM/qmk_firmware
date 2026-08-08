@@ -255,7 +255,12 @@ static void gradient(uint8_t led_min, uint8_t led_max) {
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
-    switch (get_highest_layer(layer_state)) {
+    // Must OR in default_layer_state, not just layer_state. _NORMAL is a default
+    // layer now, and QMK keeps the two masks separate -- layer_state is 0 when no
+    // momentary layer is held, so switching on it alone would report _BASE and
+    // paint white while _NORMAL is active. Key lookup uses the combined mask, which
+    // is why the keymap behaved correctly and only the RGB was wrong.
+    switch (get_highest_layer(layer_state | default_layer_state)) {
         case _BASE:
             wash(led_min, led_max, 255, 255, 255);  // White
             break;
