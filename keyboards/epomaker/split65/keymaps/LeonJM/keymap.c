@@ -114,10 +114,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     // and KC_A on the A key was a vendor leftover.
     [_STOCKFN] = LAYOUT(
         KC_GRV,  KC_F1,   KC_F2,   KC_F3,    KC_F4,    KC_F5,   KC_F6,       KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  EE_CLR,  KC_TRNS,
-        RGB_MOD, KC_BT1,  KC_BT2,  KC_BT3,   KC_2G4,   KC_TRNS,              KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RGB_HUD, RGB_HUI, KC_TRNS, KC_INS,
-        KC_TRNS, KC_TRNS, KC_NO,   KC_TRNS,  KC_TRNS,  KC_TRNS,              KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RGB_SAD, RGB_SAI, KC_TRNS,          KC_HOME,
-        KC_TRNS, KC_TRNS, RGB_TOG, KC_TRNS,  KC_TRNS,  KC_TRNS,              NK_TOGG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, RGB_VAI, KC_END,
-        KC_TRNS, GU_TOGG, KC_TRNS, KC_BATQ,                                  KC_BATQ, KC_TRNS, KC_TRNS, KC_TRNS,                   RGB_SPD, RGB_VAD, RGB_SPI
+        RM_NEXT, KC_BT1,  KC_BT2,  KC_BT3,   KC_2G4,   KC_TRNS,              KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RM_HUED, RM_HUEU, KC_TRNS, KC_INS,
+        KC_TRNS, KC_TRNS, KC_NO,   KC_TRNS,  KC_TRNS,  KC_TRNS,              KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, RM_SATD, RM_SATU, KC_TRNS,          KC_HOME,
+        KC_TRNS, KC_TRNS, RM_TOGG, KC_TRNS,  KC_TRNS,  KC_TRNS,              NK_TOGG, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,          KC_TRNS, RM_VALU, KC_END,
+        KC_TRNS, GU_TOGG, KC_TRNS, KC_BATQ,                                  KC_BATQ, KC_TRNS, KC_TRNS, KC_TRNS,                   RM_SPDD, RM_VALD, RM_SPDU
     ),
 };
 

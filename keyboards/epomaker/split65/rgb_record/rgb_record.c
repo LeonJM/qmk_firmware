@@ -4,7 +4,7 @@
 #include "rgb_record.h"
 #include "rgb_matrix.h"
 #include "eeprom.h"
-#include "quantum/nvm/nvm_eeconfig.h"
+#include "nvm_compat.h"
 
 #define RGBREC_STATE_ON  1
 #define RGBREC_STATE_OFF 0

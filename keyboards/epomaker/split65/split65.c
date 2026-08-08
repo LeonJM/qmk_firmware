@@ -415,7 +415,7 @@ static bool process_record_hs(uint16_t keycode, keyrecord_t *record) {
             break;
         }
 
-        case RGB_MOD:
+        case RM_NEXT:
             break;
         default: {
             if (rgbrec_is_started()) {
@@ -1004,21 +1004,21 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
             return false;
         } break;
-        case RGB_SPI: {
+        case RM_SPDU: {
             if (record->event.pressed) {
                 if (rgb_matrix_get_speed() >= 215) {
                     rgb_blink_dir();
                 }
             }
         } break;
-        case RGB_SPD: {
+        case RM_SPDD: {
             if (record->event.pressed) {
                 if (rgb_matrix_get_speed() <= 95) {
                     rgb_blink_dir();
                 }
             }
         } break;
-        case RGB_VAI: {
+        case RM_VALU: {
             if (record->event.pressed) {
                 rgb_matrix_enable();
                 gpio_write_pin_high(LED_POWER_EN_PIN);
@@ -1028,7 +1028,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
                 }
             }
         } break;
-        case RGB_VAD: {
+        case RM_VALD: {
             if (record->event.pressed) {
                 if (rgb_matrix_get_val() <= RGB_MATRIX_VAL_STEP) {
                     gpio_write_pin_low(LED_POWER_EN_PIN);
@@ -1068,7 +1068,7 @@ bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
             return false;
         } break;
 
-        case RGB_MOD: {
+        case RM_NEXT: {
             if(record->event.pressed){
                 uint8_t mode = rgb_matrix_get_mode();
                 if(mode == 29){
@@ -1525,11 +1525,12 @@ void hs_reset_settings(void) {
     rgblight_enable();
 #endif
 
-    eeconfig_read_keymap(&keymap_config);
+    // Compat: this tree predates the pointer-taking eeconfig_{read,update}_keymap().
+    keymap_config.raw = eeconfig_read_keymap();
 
 #if defined(NKRO_ENABLE) && defined(FORCE_NKRO)
     keymap_config.nkro = 0;
-    eeconfig_update_keymap(&keymap_config);
+    eeconfig_update_keymap(keymap_config.raw);
 #endif
 
     // #if defined(WIRELESS_ENABLE)
