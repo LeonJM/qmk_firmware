@@ -1,0 +1,3 @@
+#define TAPPING_TERM 200    // default
+#define TAPPING_TERM_PER_KEY
+#define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
