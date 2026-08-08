@@ -386,7 +386,10 @@ bool process_record_wls(uint16_t keycode, keyrecord_t *record) {
 }
 #endif
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+// Renamed from process_record_user(): that name belongs to the keymap, and
+// defining it here collides at link time with any keymap that supplies its own.
+// process_record_kb() calls the keymap's hook first, then this one.
+static bool process_record_hs(uint16_t keycode, keyrecord_t *record) {
 
     if (test_white_light_flag && record->event.pressed) {
         test_white_light_flag = false;
@@ -509,6 +512,10 @@ RGB rgb_test_open;
 bool process_record_kb(uint16_t keycode, keyrecord_t *record) {
 
     if (process_record_user(keycode, record) != true) {
+        return false;
+    }
+
+    if (process_record_hs(keycode, record) != true) {
         return false;
     }
 
@@ -1444,12 +1451,13 @@ bool rgb_matrix_indicators_advanced_kb(uint8_t led_min, uint8_t led_max) {
 
         return false;
     }
-#ifdef RGBLIGHT_ENABLE
+    // Not guarded by RGBLIGHT_ENABLE: keyboard.json sets "rgblight": false, so the
+    // keymap's per-layer indicator hook would never run. The vendor's own caps /
+    // win-lock / battery overlays below still paint on top when the hook returns true.
     if (rgb_matrix_indicators_advanced_user(led_min, led_max) != true) {
 
         return false;
     }
-#endif
 
     if (ee_clr_timer && timer_elapsed32(ee_clr_timer) > 3000) {
         hs_reset_settings();
