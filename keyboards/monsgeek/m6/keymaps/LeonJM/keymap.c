@@ -105,7 +105,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_NO,           KC_NO,           KC_NO,          KC_NO,         KC_NO,         KC_NO,            KC_NO,        KC_NO,            KC_NO,          KC_NO,           KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           KC_NO,           KC_NO,          KC_NO,         KC_NO,         KC_NO,            MS_WHLL,      MS_WHLD,          MS_WHLU,        MS_WHLR,         KC_NO,          KC_NO, KC_NO, KC_NO,     KC_NO,
         KC_NO,           LGUI_T(KC_ESC),  LALT_T(KC_NO),  LSFT_T(KC_NO), LCTL_T(KC_NO), KC_NO,            KC_LEFT,      RCTL_T(KC_DOWN),  RSFT_T(KC_UP),  RALT_T(KC_RGHT), RGUI_T(KC_NO),  KC_NO, DEAD,  KC_NO,     KC_NO,
-        KC_NO,   DEAD,   KC_NO,           KC_NO,          KC_INSERT,     KC_NO,         KC_NO,   KC_NO,   KC_HOME,      KC_PAGE_DOWN,     KC_PAGE_UP,     KC_END,          KC_NO,          KC_NO,                   KC_NO,
+        KC_NO,   DEAD,   KC_NO,           KC_NO,          KC_NO,         KC_INSERT,     KC_NO,   KC_NO,   KC_HOME,      KC_PAGE_DOWN,     KC_PAGE_UP,     KC_END,          KC_NO,          KC_NO,                   KC_NO,
         KC_NO,                                                      KC_TRNS, KC_TRNS, KC_TRNS,            KC_TAB, KC_TRNS, KC_TRNS,                                                                          KC_NO, KC_NO, KC_NO
     ),
 
